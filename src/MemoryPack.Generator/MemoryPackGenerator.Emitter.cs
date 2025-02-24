@@ -148,7 +148,18 @@ using MemoryPack;
         }
 
         var code = sb.ToString();
-        context.AddSource($"{fullType}.MemoryPackFormatter.g.cs", code);
+
+        var filePath = syntax.SyntaxTree.FilePath;
+        var fileDirectory = PathHelper.GeneratedPath(filePath);
+        if (string.IsNullOrEmpty(fileDirectory))
+        {
+            return;
+        }
+
+        var outputPath = Path.Combine(fileDirectory, $"{fullType}.MemoryPackFormatter.g.cs");
+        File.WriteAllText(outputPath, code);
+
+        //context.AddSource($"{fullType}.MemoryPackFormatter.g.cs", code);
     }
 
     static bool IsPartial(TypeDeclarationSyntax typeDeclaration)
